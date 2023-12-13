@@ -1,0 +1,44 @@
+{
+    "tests": [
+        {
+            "name": "GitHub secrets test (env vars)",
+            "setup": "sudo -H pip3 install -r requirements.txt",
+            "run": ". ./setenv.sh && pytest github_secrets_test.py::test_env_vars_exist",
+            "input": "",
+            "output": "",
+            "comparison": "exact",
+            "timeout": 5,
+            "points": 2
+        },
+        {
+            "name": "GitHub secrets test (basic comms)",
+            "setup": "sudo -H pip3 install -r requirements.txt",
+            "run": ". ./setenv.sh && pytest github_secrets_test.py::test_basic_hivemq_communication",
+            "input": "",
+            "output": "",
+            "comparison": "exact",
+            "timeout": 5,
+            "points": 2
+        },
+        {
+            "name": "Orchestrator client test",
+            "setup": "sudo -H pip3 install -r requirements.txt",
+            "run": ". ./setenv.sh && pytest orchestrator_client_test.py",
+            "input": "",
+            "output": "",
+            "comparison": "exact",
+            "timeout": 5,
+            "points": 3
+        },
+        {
+            "name": "Microcontroller client test",
+            "setup": "sudo -H pip3 install -r requirements.txt",
+            "run": ". ./setenv.sh && pytest microcontroller_client_test.py",
+            "input": "",
+            "output": "",
+            "comparison": "exact",
+            "timeout": 5,
+            "points": 3
+        }
+    ]
+}

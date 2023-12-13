@@ -1,0 +1,12 @@
+**/__pycache__/
+.pytest_cache/
+*.pyc
+.coverage
+*.egg-info/
+microcontroller_client_solution.py
+orchestrator_client_solution.py
+my_secrets.py
+results.json
+payload_dicts.json
+.env
+microcontroller_client_scratch.py

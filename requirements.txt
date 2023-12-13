@@ -1,0 +1,4 @@
+-e . # package from this repo
+paho-mqtt
+numpy
+pytest
