@@ -30,6 +30,7 @@ def flatten_dict(d, parent_key="", sep="_"):
         raise ValueError("Overlapping keys encountered.")
     return flattened
 
+
 def run_color_experiment(R, G, B):
     """Dummy function for receiving R, G, B values and returning sensor data."""
     wavelengths = [410, 440, 470, 510, 550, 583, 620, 670]
@@ -50,7 +51,7 @@ def test_orchestrator_client():
     script_name = "orchestrator_client.py"
     script_content = open(script_name).read()
 
-    if "..." in script_content:
+    if "... # IMPLEMENT" in script_content:
         warnings.warn(
             f"Please complete the '...' sections in {script_name} and remove the '...' from each section"
         )
@@ -225,13 +226,15 @@ def test_orchestrator_client():
         ), f"Received data do not match sent sensor data. Sent: \n{pformat(sent_payload_frozensets)}\n Received: \n{pformat(received_results_frozensets)}"
     except Exception as e:
         blinded_credentials = {
-            username_key: username
-            if len(username) < 4
-            else username[:2] + "*" * (len(username) - 4) + username[-2:],
+            username_key: (
+                username
+                if len(username) < 4
+                else username[:2] + "*" * (len(username) - 4) + username[-2:]
+            ),
             password_key: "*" * len(password),
-            host_key: host
-            if len(host) < 4
-            else host[:2] + "*" * (len(host) - 4) + host[-2:],
+            host_key: (
+                host if len(host) < 4 else host[:2] + "*" * (len(host) - 4) + host[-2:]
+            ),
             course_id_key: course_id,
             "command_topic": command_topic,
             "sensor_data_topic": sensor_data_topic,

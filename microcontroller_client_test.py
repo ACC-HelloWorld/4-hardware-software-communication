@@ -16,11 +16,11 @@ course_id_key = "COURSE_ID"
 def test_send_and_receive():
     """act as the orchestrator"""
 
-    # More of a check to the student than a test
+    # Warn the student if there are still ellipses in the script
     script_name = "microcontroller_client.py"
     script_content = open(script_name).read()
 
-    if "..." in script_content:
+    if "... # IMPLEMENT" in script_content:
         warnings.warn(
             f"Please complete the '...' sections in {script_name} and remove the '...' from each section"
         )
