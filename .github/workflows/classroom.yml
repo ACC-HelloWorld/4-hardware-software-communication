@@ -19,16 +19,11 @@ jobs:
       - name: Create file for setting env vars
         # https://github.com/education/autograding/issues/69#issuecomment-1497674655
         # https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#using-secrets-in-a-workflow
-        env:
-          HIVEMQ_HOST: ${{ secrets.HIVEMQ_HOST }}
-          HIVEMQ_USERNAME: ${{ secrets.HIVEMQ_USERNAME }}
-          HIVEMQ_PASSWORD: ${{ secrets.HIVEMQ_PASSWORD }}
-          COURSE_ID: ${{ secrets.COURSE_ID }}
         run: |
           echo "#!/bin/sh" > setenv.sh
-          echo "export HIVEMQ_HOST=\"$HIVEMQ_HOST\"" >> setenv.sh
-          echo "export HIVEMQ_PASSWORD=\"$HIVEMQ_PASSWORD\"" >> setenv.sh
-          echo "export HIVEMQ_USERNAME=\"$HIVEMQ_USERNAME\"" >> setenv.sh
-          echo "export COURSE_ID=\"$COURSE_ID\"" >> setenv.sh
+          echo "export COURSE_ID=\"${{ secrets.COURSE_ID }}\"" >> setenv.sh
+          echo "export HIVEMQ_HOST=\"${{ secrets.HIVEMQ_HOST }}\"" >> setenv.sh
+          echo "export HIVEMQ_PASSWORD=\"${{ secrets.HIVEMQ_PASSWORD }}\"" >> setenv.sh
+          echo "export HIVEMQ_USERNAME=\"${{ secrets.HIVEMQ_USERNAME }}\"" >> setenv.sh
           chmod +x setenv.sh
       - uses: education/autograding@v1
