@@ -2,15 +2,15 @@
 Send commands to and receive sensor data from a microcontroller using the MQTT protocol.
 
 ## The assignment
-The tests are failing right now because your HiveMQ credentials have not been added as GitHub repository secrets and the two scripts (microcontroller client and orchestrator client) are not fully implemented. Wherever you see `...` within the script requires you to write your own code. See below for instructions about adding your HiveMQ credentials as GitHub repository secrets and completing the scripts.
+The tests are failing right now because your HiveMQ credentials have not been added as GitHub repository secrets and [microcontroller_client.py](./microcontroller_client.py) and [orchestrator_client.py](./orchestrator_client.py) are not fully implemented. Wherever you see `...` within the script requires you to write your own code. See below for instructions about adding your HiveMQ credentials as GitHub repository secrets and completing the scripts.
 
 ### HiveMQ Credentials as GitHub Repository Secrets
 
-A complete walkthrough video for setting up HiveMQ and adding the GitHub repo secrets is provided at the end of this section.
+A complete walkthrough video for setting up HiveMQ and adding the GitHub repo secrets is provided at the end of this section. Please read through all the instructions in this section before starting.
 
-First, create a HiveMQ Cloud account at https://console.hivemq.cloud/, create a free-tier cluster, and add a user. Please make note of the username, password, and cluster host URL and store this somewhere secure. See also step 13b of the light-mixing demo *Build Instructions* manuscript [🔗 DOI: 10.1016/j.xpro.2023.102329](https://doi.org/10.1016/j.xpro.2023.102329).
+First, create a HiveMQ Cloud account at https://console.hivemq.cloud/. By default, a free-tier cluster should have been created for you. If not, create a new cluster. Copy the cluster URL to somewhere secure (e.g., notepad). Then, click "manage cluster" followed by "access management". Create a new user with "publish and subscribe" permissions and be sure to store the username and password somewhere secure. See also step 13b of the light-mixing demo *Build Instructions* manuscript [🔗 DOI: 10.1016/j.xpro.2023.102329](https://doi.org/10.1016/j.xpro.2023.102329).
 
-Next, add the HiveMQ credentials as GitHub repository secrets so that the credentials are available to Codespaces and GitHub Actions. The secrets to be added are as follows:
+Next, you will add the HiveMQ credentials as GitHub repository secrets so that the credentials are available to Codespaces and GitHub Actions. The secrets to be added are as follows:
 
 | Variable Name       | Description |
 |---------------------|-------------|
@@ -29,7 +29,7 @@ Thankfully, GitHub provides a way to store secrets that can be used by GitHub Ac
 
 Follow along with the video below to create your HiveMQ cluster and add your Codespaces and GitHub Actions secrets. Add each secret twice (once for Codespaces so you can run the tests manually and once for GitHub Actions so GitHub Classroom can do its autograding).
 
-[▶️ HiveMQ Walkthrough Video](hivemq-walkthrough.mp4)
+[▶️ HiveMQ and GitHub Secrets Walkthrough Video](hivemq-walkthrough.mp4)
 
 Additional instructions for adding GitHub repository secrets are available in [Using secrets in GitHub Actions](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions), and these can also be added [at a user-level](https://docs.github.com/en/codespaces/managing-your-codespaces/managing-secrets-for-your-codespaces).
 
@@ -38,9 +38,9 @@ Additional instructions for adding GitHub repository secrets are available in [U
 
 > NOTE: This section requires you to be actively running your completed code from this section on your microcontroller with it connected to a 2.4 GHz WPA-2 wireless network per the ["Before you Begin"](https://www.sciencedirect.com/science/article/pii/S2666166723002964?via%3Dihub#sec1) instructions, which you should have completed in a prior module. If you do not have the required wireless network, you can use a mobile hotspot in extended compatibility mode or a SIM-enabled router (see [recommendations](https://github.com/sparks-baird/self-driving-lab-demo/discussions/83)).
 
-You will update [`microcontroller_client.py`](./microcontroller_client.py) based on [the tutorial example](https://ac-microcourses.readthedocs.io/en/latest/courses/hello-world/1.4-hardware-software-communication.html) so that it *receives commands* for controlling an RGB LED and *sends sensor data* from a (dummy) AS7341 light sensor along with the original command. A number of dummy modules are installed by default to allow you to run dummy tests without the microcontroller. However, you are expected to copy this code to your microcontroller and have it actively running during the testing.
+You will update [`microcontroller_client.py`](./microcontroller_client.py) based on [the tutorial example](https://ac-microcourses.readthedocs.io/en/latest/courses/hello-world/1.4-hardware-software-communication.html) so that it *receives commands* for controlling an RGB LED and *sends sensor data* from a (dummy) AS7341 light sensor along with the original command. A number of dummy modules are installed by default to allow you to run dummy tests without the microcontroller. This makes it easy to test on Codespaces while you're developing the script. However, you are expected to copy this code to your microcontroller and have it actively running during the testing for the tests to pass.
 
-Use the file named [`my_secrets.py`](my_secrets.py) (autogenerated by Codespaces) to store your secrets instead of `secrets.py` to avoid clashing with Python's built-in `secrets` module when running on Codespaces and GitHub Actions. The file is created automatically when you create your codespace, but it is ignored by git (see [`.gitignore`](.gitignore)). You should not commit or push this file to the GitHub repo. Rather, it's something to be uploaded to the microcontroller.
+Use the file named [`my_secrets.py`](my_secrets.py) (autogenerated by Codespaces) instead of `secrets.py` to store your secrets to avoid clashing with Python's built-in `secrets` module when running on Codespaces and GitHub Actions. The file is created automatically when you create your codespace, but it is ignored by git (see [`.gitignore`](.gitignore)). You should not commit or push this file to the GitHub repo. Rather, it's something to be uploaded to the microcontroller.
 
 Within the script, the `run_color_experiment` dummy function takes red, green, and blue values as inputs and returns a dictionary mapping from the channel names to the dummy intensity values. See the function documentation for more information and an example.
 
@@ -155,13 +155,15 @@ with open("data.json", "w") as f:
 ## Run command
 `pytest`
 
-If you would like to run the tests in a specific file, you can specify the filename after. For example, to run the tests in `test_orchestrator_client.py`, you can use the following command.
+You can also use the "Testing" sidebar extension to easily run individual tests.
+
+To run tests in an individual file on the command line, you can specify the filename after. For example, to run the tests in `test_orchestrator_client.py`, you can use the following command.
 
 ```
 pytest test_orchestrator_client.py
 ```
 
-Likewise, for `test_microcontroller_client.py`, you can use the following command.
+<!-- Likewise, for `test_microcontroller_client.py`, you can use the following command.
 
 ```
 pytest test_microcontroller_client.py
@@ -171,7 +173,7 @@ And for `test_github_secrets.py`:
 
 ```
 pytest test_github_secrets.py
-```
+``` -->
 
 ## Setup command
 
