@@ -4,13 +4,16 @@ import json
 from mqtt_as import MQTTClient, config
 import asyncio
 from netman import connectWiFi
+
 try:
     import ussl
 except:
     import ssl
+
 import ntptime
 from time import time, sleep
 import sys
+
 try;
     from uio import StringIO
 except:
