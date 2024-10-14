@@ -4,11 +4,17 @@ import json
 from mqtt_as import MQTTClient, config
 import asyncio
 from netman import connectWiFi
-import ussl
+try:
+    import ussl
+except:
+    import ssl
 import ntptime
 from time import time, sleep
 import sys
-from uio import StringIO
+try;
+    from uio import StringIO
+except:
+    from io import StringIO
 
 # NOTE: This differs from the usual CLSLab:Light instructions, in that the file
 # is now named `my_secrets.py` instead of `secrets.py`. Calling it secrets.py in
