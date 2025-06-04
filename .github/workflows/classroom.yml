@@ -1,29 +1,87 @@
-name: GitHub Classroom Workflow
-
+name: Autograding Tests
 on:
   - push
   - workflow_dispatch
-
+  - repository_dispatch
 permissions:
   checks: write
   actions: read
   contents: read
-
 jobs:
-  build:
-    name: Autograding
+  run-autograding-tests:
     runs-on: ubuntu-latest
     if: github.actor != 'github-classroom[bot]'
     steps:
-      - uses: actions/checkout@v4
-      - name: Create file for setting env vars
-        # https://github.com/education/autograding/issues/69#issuecomment-1497674655
-        # https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#using-secrets-in-a-workflow
-        run: |
-          echo "#!/bin/sh" > setenv.sh
-          echo "export COURSE_ID=\"${{ secrets.COURSE_ID }}\"" >> setenv.sh
-          echo "export HIVEMQ_HOST=\"${{ secrets.HIVEMQ_HOST }}\"" >> setenv.sh
-          echo "export HIVEMQ_PASSWORD=\"${{ secrets.HIVEMQ_PASSWORD }}\"" >> setenv.sh
-          echo "export HIVEMQ_USERNAME=\"${{ secrets.HIVEMQ_USERNAME }}\"" >> setenv.sh
-          chmod +x setenv.sh
-      - uses: education/autograding@v1
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Create file for setting env vars
+      # https://github.com/education/autograding/issues/69#issuecomment-1497674655
+      # https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#using-secrets-in-a-workflow
+      run: |
+        echo "#!/bin/sh" > setenv.sh
+        echo "export COURSE_ID=\"${{ secrets.COURSE_ID }}\"" >> setenv.sh
+        echo "export HIVEMQ_HOST=\"${{ secrets.HIVEMQ_HOST }}\"" >> setenv.sh
+        echo "export HIVEMQ_PASSWORD=\"${{ secrets.HIVEMQ_PASSWORD }}\"" >> setenv.sh
+        echo "export HIVEMQ_USERNAME=\"${{ secrets.HIVEMQ_USERNAME }}\"" >> setenv.sh
+        chmod +x setenv.sh
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: GitHub secrets test (env vars)
+      id: github-secrets-env-vars
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: GitHub secrets test (env vars)
+        setup-command: sudo -H pip3 install -r requirements.txt
+        command: ". ./setenv.sh && pytest github_secrets_test.py::test_env_vars_exist"
+        timeout: 5
+        max-score: 2
+
+    - name: GitHub secrets test (basic comms)
+      id: github-secrets-basic-comms
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: GitHub secrets test (basic comms)
+        setup-command: sudo -H pip3 install -r requirements.txt
+        command: ". ./setenv.sh && pytest github_secrets_test.py::test_basic_hivemq_communication"
+        timeout: 5
+        max-score: 2
+
+    - name: Orchestrator client test
+      id: orchestrator-client-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Orchestrator client test
+        setup-command: sudo -H pip3 install -r requirements.txt
+        command: ". ./setenv.sh && pytest orchestrator_client_test.py"
+        timeout: 5
+        max-score: 3
+
+    - name: Microcontroller client test
+      id: microcontroller-client-test
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Microcontroller client test
+        setup-command: sudo -H pip3 install -r requirements.txt
+        command: ". ./setenv.sh && pytest microcontroller_client_test.py"
+        timeout: 5
+        max-score: 3
+
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        GITHUB-SECRETS-ENV-VARS_RESULTS: "${{ steps.github-secrets-env-vars.outputs.result }}"
+        GITHUB-SECRETS-BASIC-COMMS_RESULTS: "${{ steps.github-secrets-basic-comms.outputs.result }}"
+        ORCHESTRATOR-CLIENT-TEST_RESULTS: "${{ steps.orchestrator-client-test.outputs.result }}"
+        MICROCONTROLLER-CLIENT-TEST_RESULTS: "${{ steps.microcontroller-client-test.outputs.result }}"
+      with:
+        runners: github-secrets-env-vars,github-secrets-basic-comms,orchestrator-client-test,microcontroller-client-test
